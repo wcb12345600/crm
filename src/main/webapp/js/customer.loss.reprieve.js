@@ -1,0 +1,59 @@
+$(function () {
+    var lossId = $("#lossId").val();
+    console.log(lossId);
+    // console.log(sid);
+    $("#dg").edatagrid({
+        url: ctx + "/customerReprieve/queryReprievesByParams?lossId="+lossId,
+        saveUrl: ctx + "/customerReprieve/saveOrUpdateCustomerReprieve?lossId="+lossId,
+        updateUrl: ctx + "/customerReprieve/saveOrUpdateCustomerReprieve?lossId="+lossId
+    });
+
+    var state = $("#state").val();
+    if (state==1){
+        // 隐藏工具条
+        $('#toolbar').hide();
+        // 使表格不可编辑
+        $('#dg').edatagrid("disableEditing");
+    }
+});
+
+function addRow() {
+    $('#dg').edatagrid("addRow");
+}
+
+function saveOrUpdateCusDevPlan() {
+    $('#dg').edatagrid("saveRow");
+}
+
+
+function loadEdatagrld() {
+    $("#dg").edatagrid("load");
+}
+
+/**
+ * 删除客户开发计划
+ */
+function delCusDevPlan() {
+    deleteData("dg",ctx + "/customerReprieve/delReprieve",loadEdatagrld);
+}
+
+function confirmLoss() {
+    var lossId = $("#lossId").val();
+
+    $.ajax({
+        url:ctx+"/customerReprieve/updateCustomerReprieveState?lossId="+lossId,
+        type:"post",
+        success:function (data) {
+            if (data.code == 200) {
+                $.messager.alert('来自Crm', data.msg, 'info', function () {
+                    // 隐藏工具条
+                    $('#toolbar').hide();
+                    // 使表格不可编辑
+                    $('#dg').edatagrid("disableEditing");
+                });
+            } else {
+                $.messager.alert('来自Crm', data.msg, 'error');
+            }
+        }
+    })
+}
